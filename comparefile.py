@@ -1,5 +1,4 @@
 import os
-import itertools
 
 #compare target file to base
 #prints:
@@ -66,7 +65,7 @@ def compare(base, target, verbose):
             #lastConsecutive = maxConsecutiveStartsAt + maxConsecutive - 1
             consecutivePercentage = round(100.0 * maxConsecutive / lineCount, 2)
             #print str(maxConsecutive) + " consecutive lines (" + str(maxConsecutiveStartsAt) + "-" + str(lastConsecutive) + ", " + str(consecutivePercentage) + "%)"
-            print str(maxConsecutive) + " consecutive lines (" + str(consecutivePercentage) + "%)"
+            print str(maxConsecutive) + " consecutive lines at " + str(maxConsecutiveStartsAt) + " (" + str(consecutivePercentage) + "%)"
         if verbose:
             print
             for line in matches:
@@ -81,5 +80,3 @@ def simplifyLine(str):
     #would catch lines like "a=1"-"a = 1"
     str = str.replace(' ','')
     return str
-
-#
