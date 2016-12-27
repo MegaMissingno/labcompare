@@ -1,10 +1,14 @@
+from __future__ import division
 import os
 
 #compare target file to base
-#prints:
-#   number and percentage of lines found in target that match base
-#   longest consecutive run of matched lines
-#   if verbose, prints all matched lines
+#returns dict of the following:
+#   linesMatched: number of identical lines
+#   lineCount: number of lines counted (empty lines are skipped)
+#   percentage: linesMatched/lineCount
+#   maxConsecutive: longest run of consecutive lines matched.
+#   maxConsecutiveStartsAt: line number of the above, first instance if there is a tie, omitted if no matches at all
+#   matches: list of all matched lines, prefixed with line numbers, only if verbose is true and matches were found
 def compare(base, target, verbose):
     bf = open(base, 'r')
     tf = open(target)
@@ -55,22 +59,27 @@ def compare(base, target, verbose):
             if not matched:
                 curConsecutive = 0
                 curConsecutiveStartsAt = 0
-
-    percentage = round(100.0 * linesMatched / lineCount, 2)
-    print str(linesMatched) + " of " + str(lineCount) + " lines matched (" + str(percentage) + "%)"
     
+    r = {}
+    r["percentage"] = linesMatched / lineCount
+    r["linesMatched"] = linesMatched
+    r["lineCount"] = lineCount
+    r["maxConsecutive"] = maxConsecutive
+
     if linesMatched > 0:
-        if maxConsecutive > 1:
-            #this is wrong, doesn't account for skipped lines
-            #lastConsecutive = maxConsecutiveStartsAt + maxConsecutive - 1
-            consecutivePercentage = round(100.0 * maxConsecutive / lineCount, 2)
-            #print str(maxConsecutive) + " consecutive lines (" + str(maxConsecutiveStartsAt) + "-" + str(lastConsecutive) + ", " + str(consecutivePercentage) + "%)"
-            print str(maxConsecutive) + " consecutive lines at " + str(maxConsecutiveStartsAt) + " (" + str(consecutivePercentage) + "%)"
+        #this is wrong, doesn't account for skipped lines
+        #lastConsecutive = maxConsecutiveStartsAt + maxConsecutive - 1
+        r["consecutivePercentage"] = maxConsecutive / lineCount
+        r["maxConsecutiveStartsAt"] = maxConsecutiveStartsAt
+        #print str(maxConsecutive) + " consecutive lines (" + str(maxConsecutiveStartsAt) + "-" + str(lastConsecutive) + ", " + str(consecutivePercentage) + "%)"
         if verbose:
-            print
-            for line in matches:
-                print line
-            
+            #print
+            r["matches"] = matches
+            #for line in matches:
+                #print line
+    
+    return r
+
 
 #strips whitespace and converts to lowercase
 def simplifyLine(str):
